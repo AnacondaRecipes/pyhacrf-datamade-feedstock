@@ -7,8 +7,9 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pyhacrf-datamade-{{ version }}.tar.gz
-  sha256: 6e898ab725af37337773fc2076d617255f64db018f2dd486b9e4f8ecda15cfed
+  # Use upstream archive tarball for tests
+  url: https://github.com/datamade/pyhacrf/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: df59476f6f46e19f1197af517ce25f6c991ae427af7aff43f8e640b535763d12
 
 build:
   number: 0
@@ -19,23 +20,27 @@ requirements:
     - {{ compiler('c') }}
   host:
     - cython
-    - numpy
+    - numpy {{ numpy }}
     - pip
     - python
     - setuptools
     - wheel
   run:
-    - pylbfgs
+    - pylbfgs >=0.1.3
     - python
     - {{ pin_compatible('numpy') }}
 
 test:
+  source_files:
+    - pyhacrf/tests
   imports:
     - pyhacrf
   requires:
     - pip
+    - pytest
   commands:
     - pip check
+    - pytest -v pyhacrf/tests
 
 about:
   home: https://github.com/dedupeio/pyhacrf
