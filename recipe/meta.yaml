@@ -1,5 +1,5 @@
 {% set name = "pyhacrf-datamade" %}
-{% set version = "0.2.6" %}
+{% set version = "0.2.7" %}
 
 
 package:
@@ -8,12 +8,12 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pyhacrf-datamade-{{ version }}.tar.gz
-  sha256: cddbd89aad5849fb8fba6f93bfea177fd02dba1b81718fd215f57b48d3d6f5ed
+  sha256: 6e898ab725af37337773fc2076d617255f64db018f2dd486b9e4f8ecda15cfed
 
 build:
-  number: 2
+  number: 0
   skip: true  # [win]
-  script: {{ PYTHON }} -m pip install . -vv
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   build:
@@ -23,6 +23,8 @@ requirements:
     - numpy
     - pip
     - python
+    - setuptools
+    - wheel
   run:
     - pylbfgs
     - python
@@ -31,16 +33,22 @@ requirements:
 test:
   imports:
     - pyhacrf
-  commands:
-    - pip check
   requires:
     - pip
+  commands:
+    - pip check
 
 about:
   home: https://github.com/dedupeio/pyhacrf
-  summary: Hidden alignment conditional random field, a discriminative string edit distance
+  summary: Hidden alignment conditional random field for classifying string pairs.
+  description: |
+    Hidden alignment conditional random field for classifying string
+    pairs - a learnable edit distance.
   license: BSD-3-Clause
   license_file: LICENSE
+  license_family: BSD
+  doc_url: https://github.com/dedupeio/pyhacrf
+  dev_url: https://github.com/dedupeio/pyhacrf
 
 extra:
   recipe-maintainers:
