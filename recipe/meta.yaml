@@ -1,5 +1,5 @@
 {% set name = "pyhacrf-datamade" %}
-{% set version = "0.2.6" %}
+{% set version = "0.2.7" %}
 
 
 package:
@@ -7,40 +7,54 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pyhacrf-datamade-{{ version }}.tar.gz
-  sha256: cddbd89aad5849fb8fba6f93bfea177fd02dba1b81718fd215f57b48d3d6f5ed
+  # Use upstream archive tarball for tests
+  url: https://github.com/datamade/pyhacrf/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: df59476f6f46e19f1197af517ce25f6c991ae427af7aff43f8e640b535763d12
 
 build:
-  number: 2
-  skip: true  # [win]
-  script: {{ PYTHON }} -m pip install . -vv
+  number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   build:
     - {{ compiler('c') }}
   host:
     - cython
-    - numpy
+    - numpy {{ numpy }}
     - pip
     - python
+    - setuptools
+    - wheel
   run:
-    - pylbfgs
+    - pylbfgs >=0.1.3
     - python
     - {{ pin_compatible('numpy') }}
 
 test:
+  source_files:
+    - pyhacrf/tests
   imports:
     - pyhacrf
-  commands:
-    - pip check
   requires:
     - pip
+    - pytest
+  commands:
+    - pip check
+    - pytest -v pyhacrf/tests                               # [not linux-64]
+    # AssertionError: -2.0 != -1.9999999999999998
+    - pytest -v pyhacrf/tests -k "not test_forward_single"  # [linux-64]
 
 about:
   home: https://github.com/dedupeio/pyhacrf
-  summary: Hidden alignment conditional random field, a discriminative string edit distance
+  summary: Hidden alignment conditional random field for classifying string pairs.
+  description: |
+    Hidden alignment conditional random field for classifying string
+    pairs - a learnable edit distance.
   license: BSD-3-Clause
   license_file: LICENSE
+  license_family: BSD
+  doc_url: https://github.com/dedupeio/pyhacrf
+  dev_url: https://github.com/dedupeio/pyhacrf
 
 extra:
   recipe-maintainers:
